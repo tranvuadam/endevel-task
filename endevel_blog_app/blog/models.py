@@ -1,5 +1,7 @@
 import os
 
+from PIL import Image
+from django.core.files.images import ImageFile
 from django.db import models
 
 # Create your models here.
@@ -11,7 +13,7 @@ def get_upload_path(instance, filename):
 
 
 def get_thumb_upload_path(instance, filename):
-    return os.path.join(instance.title, "thumbnail", filename)
+    return os.path.join("thumbnails", filename)
 
 
 class BlogPost(models.Model):
@@ -24,3 +26,14 @@ class BlogPost(models.Model):
 
     def filename(self):
         return os.path.basename(self.image.name)
+
+    def save(self, *args, **kwargs):
+        self.thumbnail = ImageFile(self.image)
+        super().save(*args, **kwargs)
+
+        image = Image.open(self.thumbnail.path)
+        output_size = (300, 300)
+        image.thumbnail(output_size)
+        image.save(self.thumbnail.path)
+
+
