@@ -30,6 +30,9 @@ class BlogPost(models.Model):
         super().__init__(*args, **kwargs)
         self.__original_image = self.image
 
+    def __str__(self):
+        return self.title
+
     def filename(self):
         return os.path.basename(self.image.name)
 
