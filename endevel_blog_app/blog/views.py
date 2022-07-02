@@ -10,7 +10,7 @@ from blog.serializers import BlogPostSerializer, BlogPostDetailSerializer
 class HomePageView(APIView):
 
     def get(self, request, format=None):
-        blog_posts = BlogPost.objects.all()[:3]
+        blog_posts = BlogPost.objects.all().order_by("-pk")[:3]
         serializer = BlogPostSerializer(blog_posts, many=True)
         return Response(serializer.data)
 
@@ -21,11 +21,11 @@ class BlogPostList(APIView):
         if 'tags' in self.request.query_params:
             tags = self.request.query_params.getlist('tags', None)
             try:
-                blog_posts = BlogPost.objects.filter(tags__in=tags)
+                blog_posts = BlogPost.objects.filter(tags__in=tags).distinct().order_by("-pk")
             except ValueError:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
         else:
-            blog_posts = BlogPost.objects.all()
+            blog_posts = BlogPost.objects.all().order_by("-pk")
         serializer = BlogPostSerializer(blog_posts, many=True)
         return Response(serializer.data)
 
