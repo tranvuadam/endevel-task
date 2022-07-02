@@ -24,16 +24,29 @@ class BlogPost(models.Model):
     image = models.ImageField("Image", upload_to=get_upload_path, default="default.jpg")
     thumbnail = models.ImageField("Thumbnail", upload_to=get_thumb_upload_path, default="default_thumb.jpg")
 
+    __original_image = None
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.__original_image = self.image
+
     def filename(self):
         return os.path.basename(self.image.name)
 
     def save(self, *args, **kwargs):
-        self.thumbnail = ImageFile(self.image)
-        super().save(*args, **kwargs)
-
-        image = Image.open(self.thumbnail.path)
-        output_size = (300, 300)
-        image.thumbnail(output_size)
-        image.save(self.thumbnail.path)
+        # create copy
+        if self.__original_image != self.image:
+            self.thumbnail = ImageFile(self.image)
+            super().save(*args, **kwargs)
+            # resize thumbnail
+            image = Image.open(self.thumbnail.path)
+            output_size = [250, 250]
+            image.thumbnail(output_size, Image.ANTIALIAS)
+            if image.mode == "JPEG":
+                image.save(self.thumbnail.path, format='JPEG')
+            elif image.mode in ["RGBA", "P"]:
+                image.save(self.thumbnail.path, format='PNG')
+        else:
+            super().save(*args, **kwargs)
 
 
