@@ -1,0 +1,42 @@
+[
+  {
+    "model": "blog.blogpost",
+    "pk": 1,
+    "fields": {
+      "title": "blog_title",
+      "detail": "blog_detail",
+      "text": "blog_text",
+      "tags": [1, 2]
+    }
+  },
+  {
+    "model": "blog.blogpost",
+    "pk": 2,
+    "fields": {
+      "title": "blog_title2",
+      "detail": "blog_detail2",
+      "text": "blog_text2",
+      "tags": [2, 3]
+    }
+  },
+  {
+    "model": "blog.blogpost",
+    "pk": 3,
+    "fields": {
+      "title": "blog_title3",
+      "detail": "blog_detail3",
+      "text": "blog_text3",
+      "tags": [1]
+    }
+  },
+  {
+    "model": "blog.blogpost",
+    "pk": 4,
+    "fields": {
+      "title": "blog_title4",
+      "detail": "blog_detail4",
+      "text": "blog_text4",
+      "tags": [1, 3]
+    }
+  }
+]
