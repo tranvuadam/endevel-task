@@ -22,6 +22,6 @@ from endevel_blog_app import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', HomePageView.as_view()),
+    path('', HomePageView.as_view(), name="home_page"),
     path('blog/', include('blog.urls'))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -17,9 +17,9 @@ from django.contrib import admin
 from django.urls import path, include
 
 from blog import views
-
+app_name = 'blog'
 urlpatterns = [
-    path('', views.BlogPostList.as_view()),
-    path('<int:pk>/', views.BlogPostDetail.as_view()),
+    path('', views.BlogPostList.as_view(), name="blog_post_list"),
+    path('<int:pk>/', views.BlogPostDetail.as_view(), name="blog_post_detail"),
 
 ]
