@@ -16,7 +16,10 @@ Docker
         - loading tag, blog and user fixtures
         - running API tests
         - running server
-6. The app will run on address http://127.0.0.1:8000/
-7. User fixtures include a testing superuser account
-    - username: a
-    - password: a
+6. The app will run on address: http://127.0.0.1:8000/
+
+To view API documentation: http://127.0.0.1:8000/api_documentation
+
+User fixtures include a testing superuser account:
+   - username: a
+   - password: a
