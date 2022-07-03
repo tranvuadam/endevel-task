@@ -7,7 +7,7 @@ from blog.serializers import BlogPostSerializer, BlogPostDetailSerializer
 from tag.models import Tag
 
 
-class HomePageTests(APITestCase):
+class BlogPostTest(APITestCase):
     def setUp(self):
         tag = Tag.objects.create(name="tag")
         tag2 = Tag.objects.create(name="tag2")
