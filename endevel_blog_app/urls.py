@@ -16,12 +16,28 @@ Including another URLconf
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
+from drf_yasg import openapi
+from drf_yasg.views import get_schema_view
 
 from blog.views import HomePageView
 from endevel_blog_app import settings
 
+schema_view = get_schema_view(
+   openapi.Info(
+      title="Endevel blog app",
+      default_version='v1',
+      description="This is an API solution for a test task given by Endevel.",
+      terms_of_service="https://www.google.com/policies/terms/",
+      contact=openapi.Contact(email="contact@snippets.local"),
+      license=openapi.License(name="BSD License"),
+   ),
+   public=True,
+)
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', HomePageView.as_view(), name="home_page"),
-    path('blog/', include('blog.urls'))
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    path('blog/', include('blog.urls')),
+    path('tag/', include('tag.urls')),
+    path('api_documentation/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+
+              ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
