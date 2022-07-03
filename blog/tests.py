@@ -31,6 +31,20 @@ class BlogPostTest(APITestCase):
         self.assertEqual(response.data[1], BlogPostSerializer(BlogPost.objects.get(pk=3)).data)
         self.assertEqual(response.data[2], BlogPostSerializer(BlogPost.objects.get(pk=2)).data)
 
+    def test_new_blog_post(self):
+        url = reverse('blog:blog_post_list')
+        data = {'title': "blog_title", "detail": "blog_detail", "text": "blog_text", "tags": [1, 2]}
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(len(response.data), 7)
+        self.assertEqual(response.data, BlogPostDetailSerializer(BlogPost.objects.get(pk=5)).data)
+
+    def test_new_blog_post_invalid_data(self):
+        url = reverse('blog:blog_post_list')
+        data = {'invalid_field': "blog_title", "detail": "blog_detail", "text": "blog_text", "tags": [1, 2]}
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
     def test_blog_post_detail(self):
         url = reverse('blog:blog_post_detail', kwargs={'pk': 4})
         response = self.client.get(url, format='json')
@@ -42,6 +56,41 @@ class BlogPostTest(APITestCase):
     def test_blog_post_detail_not_found(self):
         url = reverse('blog:blog_post_detail', kwargs={'pk': 5})
         response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_blog_post_detail_put(self):
+        url = reverse('blog:blog_post_detail', kwargs={'pk': 4})
+        data = {'title': "blog_title", "detail": "blog_detail", "text": "blog_text", "tags": [2]}
+        response = self.client.put(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # num of fields
+        self.assertEqual(len(response.data), 7)
+        self.assertEqual(response.data, BlogPostDetailSerializer(BlogPost.objects.get(pk=4)).data)
+
+    def test_blog_post_detail_put_invalid_data(self):
+        url = reverse('blog:blog_post_detail', kwargs={'pk': 4})
+        data = {'invalid_data': "blog_title", "detail": "blog_detail", "text": "blog_text", "tags": [2]}
+        response = self.client.put(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_blog_post_detail_add_tag(self):
+        tag_id = 2
+        url = reverse('blog:blog_post_add_tag', kwargs={'pk': 4, 'tag_pk': tag_id})
+        response = self.client.put(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # num of fields
+        self.assertEqual(len(response.data), 7)
+        self.assertEqual(response.data, BlogPostDetailSerializer(BlogPost.objects.get(pk=4)).data)
+        self.assertIn(tag_id, BlogPostDetailSerializer(BlogPost.objects.get(pk=4)).data['tags'])
+
+    def test_blog_post_detail_add_tag_not_found_tag(self):
+        url = reverse('blog:blog_post_add_tag', kwargs={'pk': 4, 'tag_pk': 42})
+        response = self.client.put(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_blog_post_detail_add_tag_not_found_blog(self):
+        url = reverse('blog:blog_post_add_tag', kwargs={'pk': 42, 'tag_pk': 2})
+        response = self.client.put(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_blog_post_list_no_tags(self):
@@ -101,5 +150,3 @@ class BlogPostTest(APITestCase):
         url = reverse('blog:blog_post_list')
         response = self.client.get(url + "?tags=1&tags=invalid_tag", format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
-
