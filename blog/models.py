@@ -37,18 +37,16 @@ class BlogPost(models.Model):
         return os.path.basename(self.image.name)
 
     def save(self, *args, **kwargs):
-        # create copy
+        # check if image is changed
         if self.__original_image != self.image:
+            # create copy
             self.thumbnail = ImageFile(self.image)
             super().save(*args, **kwargs)
             # resize thumbnail
             image = Image.open(self.thumbnail.path)
             output_size = [250, 250]
             image.thumbnail(output_size, Image.ANTIALIAS)
-            if image.mode == "JPEG":
-                image.save(self.thumbnail.path, format='JPEG')
-            elif image.mode in ["RGBA", "P"]:
-                image.save(self.thumbnail.path, format='PNG')
+            image.save(self.thumbnail.path)
         else:
             super().save(*args, **kwargs)
 
